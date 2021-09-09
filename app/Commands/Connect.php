@@ -13,7 +13,7 @@ class Connect extends Command
      *
      * @var string
      */
-    protected $signature = 'connect:range {host} {nodes} {--startPort} {--password} {--autoStart}';
+    protected $signature = 'connect:range {host} {nodes} {--startPort=} {--password} {--autoStart}';
 
     /**
      * The description of the command.
@@ -47,7 +47,7 @@ class Connect extends Command
         }
 
         $script = "";
-        for ($i = 0; $i <= $nodes; $i++) {
+        for ($i = 1; $i <= $nodes; $i++) {
             $fileName = sprintf(
                 '%s/%s:%s.vnc',
                 $host,
