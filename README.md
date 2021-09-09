@@ -9,4 +9,6 @@ This service initially is to create vnc connection files for testing on multiple
 - run composer
 
 ## Practical use
-execute: php easy-vnc 127.0.0.1 10 32768 secret
+example: php easy-vnc connect:range tiago-pc 10 --autoStart
+
+to view available commands execute: php easy-vnc
