@@ -6,6 +6,10 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Storage;
 use LaravelZero\Framework\Commands\Command;
 
+/**
+ * Class Connect
+ * @package App\Commands
+ */
 class Connect extends Command
 {
     /**
@@ -20,7 +24,7 @@ class Connect extends Command
      *
      * @var string
      */
-    protected $description = 'Fast vnc connection for testing with selenium nodes (auto-range)';
+    protected $description = 'fast vnc connection for testing with selenium nodes (auto-range)';
 
     /**
      * Execute the console command.
@@ -31,20 +35,30 @@ class Connect extends Command
     {
         $defaultPort = 32768;
 
+        #arguments
         $host = $this->argument('host');
         $nodes = $this->argument('nodes');
 
+        #options
         $startPort = $this->option('startPort');
-        $password = $this->option('password');
+        $password = $this->option('password'); // md5 here...
         $autoStart = $this->option('autoStart');
 
         if (!empty($startPort)) {
             $defaultPort = $startPort;
         }
 
-        if (is_int($nodes)){
-            //$this->error('Please enter a valid number of connections.');
+        if (empty($nodes)){
+            $this->error('please enter a valid number of connections....');
+            return false;
         }
+
+        if (!empty($password)){
+            $this->error('password not working, skyping....');
+        }
+
+        $endPort = $defaultPort + ($nodes -1);
+        $this->warn("connection range [$defaultPort - $endPort]....");
 
         $script = "";
         for ($i = 1; $i <= $nodes; $i++) {
@@ -65,7 +79,7 @@ class Connect extends Command
             Storage::put($fileName, $content);
 
             if (!empty($autoStart)) {
-                $this->warn("Abrindo conexão $defaultPort");
+                $this->warn("opening connection in port $defaultPort....");
                 $script .= "xdg-open storage/$fileName ; ";
             }
 
@@ -73,6 +87,9 @@ class Connect extends Command
         }
 
         exec($script);
+
+        //clean tmp connections - comments in test
+        exec("rm -rf storage/$host");
 
         $this->info("foram criados [$nodes] arquivos de conexão...");
 
